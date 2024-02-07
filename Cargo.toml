@@ -1,0 +1,8 @@
+[package]
+edition = "2021"
+name = "life"
+version = "0.1.0"
+
+[dependencies]
+rand = "0.8.5"
+termion = "3.0.0"
