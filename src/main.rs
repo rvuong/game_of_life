@@ -1,6 +1,5 @@
 use life::GameOfLife;
 use std::io::{stdin, stdout, Write};
-// use termion::{color, style};
 use termion::event::Key;
 use termion::input::TermRead;
 use termion::raw::IntoRawMode;
@@ -21,7 +20,7 @@ fn main() {
     let mut game_of_life = GameOfLife::new(15, 15);
 
     for c in stdin.keys() {
-        //clearing the screen and going to top left corner
+        // Clears the screen and going to top left corner
         write!(
             stdout,
             "{}{}",
@@ -36,11 +35,6 @@ fn main() {
                 game_of_life.get_next();
                 println!("{}", game_of_life);
             }
-            // x => {
-            // println!("{:#?}", x);
-            //
-            //     ()
-            // },
             _ => (),
         }
 
