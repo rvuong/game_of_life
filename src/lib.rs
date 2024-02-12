@@ -1,4 +1,5 @@
 use rand::Rng;
+use std::fmt::{Display, Formatter, Result};
 
 #[derive(Clone, Debug)]
 pub struct Matrix {
@@ -87,8 +88,19 @@ impl Matrix {
     }
 }
 
-impl std::fmt::Display for Matrix {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+// impl Iterator for Matrix {
+//     type Item = Vec<Vec<bool>>;
+//
+//     fn next(&mut self) -> Option<Self::Item> {
+//         let current = &self.data;
+//
+//         // self.data = self.next;
+//         Some(current.to_vec())
+//     }
+// }
+
+impl Display for Matrix {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         let row_join = format!(
             "\r\n{:-^1$}\r\n",
             "-",
@@ -140,8 +152,8 @@ impl GameOfLife {
     }
 }
 
-impl std::fmt::Display for GameOfLife {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl Display for GameOfLife {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
         if let Some(matrix) = self.steps.last() {
             write!(f, "\n{}\n\nstep: {}\n", matrix, self.steps.len())
         } else {
