@@ -18,7 +18,8 @@ fn test_game_of_life_init() {
 #[test]
 fn test_game_of_life_next() {
     let mut game_of_life = GameOfLife::new(3, 3);
-    let result = game_of_life.get_next();
+    let next = game_of_life.next();
 
-    assert_eq!(result, Some(2));
+    assert!(next.is_some());
+    assert_eq!(game_of_life.steps.len(), 2);
 }

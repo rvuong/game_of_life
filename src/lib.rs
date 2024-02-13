@@ -29,28 +29,6 @@ impl Matrix {
         Self { data, rows, cols }
     }
 
-    fn get_next(&self) -> Self {
-        let mut next: Vec<Vec<bool>> = vec![];
-        for (i, row) in self.data.iter().enumerate() {
-            let mut next_row: Vec<bool> = vec![];
-            for (j, cell) in row.iter().enumerate() {
-                let next_cell: bool = match self.neighbors_number(i, j) {
-                    3 => true,
-                    2 => *cell,
-                    _ => false,
-                };
-                next_row.push(next_cell);
-            }
-            next.push(next_row);
-        }
-
-        Self {
-            data: next,
-            rows: self.rows,
-            cols: self.cols,
-        }
-    }
-
     fn neighbors_number(&self, _row: usize, _col: usize) -> u32 {
         // Get boundaries for potential neighbors
         let start_row = if _row == 0 { 0 } else { _row - 1 };
@@ -88,16 +66,31 @@ impl Matrix {
     }
 }
 
-// impl Iterator for Matrix {
-//     type Item = Vec<Vec<bool>>;
-//
-//     fn next(&mut self) -> Option<Self::Item> {
-//         let current = &self.data;
-//
-//         // self.data = self.next;
-//         Some(current.to_vec())
-//     }
-// }
+impl Iterator for Matrix {
+    type Item = Self;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let mut next: Vec<Vec<bool>> = vec![];
+        for (i, row) in self.data.iter().enumerate() {
+            let mut next_row: Vec<bool> = vec![];
+            for (j, cell) in row.iter().enumerate() {
+                let next_cell: bool = match self.neighbors_number(i, j) {
+                    3 => true,
+                    2 => *cell,
+                    _ => false,
+                };
+                next_row.push(next_cell);
+            }
+            next.push(next_row);
+        }
+
+        Some(Self {
+            data: next,
+            rows: self.rows,
+            cols: self.cols,
+        })
+    }
+}
 
 impl Display for Matrix {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
@@ -139,17 +132,6 @@ impl GameOfLife {
 
         Self { steps }
     }
-
-    pub fn get_next(&mut self) -> Option<usize> {
-        if let Some(last) = self.steps.last() {
-            let next = last.get_next();
-            self.steps.push(next);
-
-            Some(self.steps.len())
-        } else {
-            None
-        }
-    }
 }
 
 impl Display for GameOfLife {
@@ -158,6 +140,24 @@ impl Display for GameOfLife {
             write!(f, "\n{}\n\nstep: {}\n", matrix, self.steps.len())
         } else {
             write!(f, "NA")
+        }
+    }
+}
+
+impl Iterator for GameOfLife {
+    type Item = Matrix;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if let Some(last) = self.steps.last() {
+            let mut last = last.clone();
+            if let Some(next) = last.next() {
+                self.steps.push(next.clone());
+                Some(next)
+            } else {
+                None
+            }
+        } else {
+            None
         }
     }
 }

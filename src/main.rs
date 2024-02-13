@@ -7,9 +7,9 @@ use termion::raw::IntoRawMode;
 
 #[derive(Parser, Debug)]
 struct Args {
-    #[clap(short = 'r', long, default_value_t = 3)]
+    #[clap(short = 'r', long, default_value_t = 8)]
     rows: usize,
-    #[clap(short = 'c', long, default_value_t = 3)]
+    #[clap(short = 'c', long, default_value_t = 8)]
     cols: usize,
 }
 
@@ -30,20 +30,31 @@ fn main() {
 
     let mut game_of_life = GameOfLife::new(args.rows, args.cols);
 
-    for c in stdin.keys() {
-        // Clears the screen and going to top left corner
-        write!(
-            stdout,
-            "{}{}",
-            termion::cursor::Goto(1, 1),
-            termion::clear::All
-        )
-        .unwrap();
+    for k in stdin.keys() {
+        match k.unwrap() {
+            Key::Ctrl('q') => {
+                // Clears the screen, and goes to the top left corner
+                write!(
+                    stdout,
+                    "{}{}",
+                    termion::cursor::Goto(1, 1),
+                    termion::clear::All
+                )
+                .unwrap();
 
-        match c.unwrap() {
-            Key::Ctrl('q') => break,
+                break;
+            }
             Key::Right => {
-                game_of_life.get_next();
+                // Clears the screen, and goes to the top left corner
+                write!(
+                    stdout,
+                    "{}{}",
+                    termion::cursor::Goto(1, 1),
+                    termion::clear::All
+                )
+                .unwrap();
+
+                game_of_life.next();
                 println!("{}", game_of_life);
             }
             _ => (),
