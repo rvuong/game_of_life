@@ -125,6 +125,20 @@ impl Display for Matrix {
     }
 }
 
+impl PartialEq for Matrix {
+    fn eq(&self, other: &Self) -> bool {
+        for (i, r) in self.data.iter().enumerate() {
+            if let Some(other_row) = other.data.get(i) {
+                if other_row != r {
+                    return false;
+                }
+            }
+        }
+
+        true
+    }
+}
+
 impl GameOfLife {
     pub fn new(rows: usize, cols: usize) -> Self {
         let matrix = Matrix::new(rows, cols);
@@ -151,8 +165,13 @@ impl Iterator for GameOfLife {
         if let Some(last) = self.steps.last() {
             let mut last = last.clone();
             if let Some(next) = last.next() {
-                self.steps.push(next.clone());
-                Some(next)
+                // TODO Check if next is equal to n-1 Matrix (infinite loop)
+                if next == last {
+                    None
+                } else {
+                    self.steps.push(next.clone());
+                    Some(next)
+                }
             } else {
                 None
             }
